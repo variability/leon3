@@ -1,0 +1,74 @@
+From d1c86f1f9b91ce5ff4d7beb1387a007f023d2f61 Mon Sep 17 00:00:00 2001
+From: Jan Andersson <jan@gaisler.com>
+Date: Mon, 7 Feb 2011 16:44:44 +0100
+Subject: [PATCH 7/9] xsysace: Add support for LEON/GRLIB SoCs
+
+LEON/GRLIB (SPARC32) SoCs can include an AMBA System ACE interface
+controller (GRACECTRL). The controller maps SysACE registers into
+AMBA address space. This patch adds init code so that the xsysace
+driver is used on GRLIB based SoCs that include the GRACECTRL core.
+
+Tested with LEON3 SoC design on Xilinx ML507 development board.
+
+Signed-off-by: Jan Andersson <jan@gaisler.com>
+---
+ drivers/block/Kconfig   |    2 +-
+ drivers/block/xsysace.c |   14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index 717d6e4..3e13764 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -456,7 +456,7 @@ source "drivers/s390/block/Kconfig"
+ 
+ config XILINX_SYSACE
+ 	tristate "Xilinx SystemACE support"
+-	depends on 4xx || MICROBLAZE
++	depends on 4xx || MICROBLAZE || SPARC_LEON
+ 	help
+ 	  Include support for the Xilinx SystemACE CompactFlash interface
+ 
+diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
+index 6c7fd7d..19dba5a 100644
+--- a/drivers/block/xsysace.c
++++ b/drivers/block/xsysace.c
+@@ -98,6 +98,12 @@
+ #include <linux/of_device.h>
+ #include <linux/of_platform.h>
+ #endif
++#if defined(CONFIG_SPARC_LEON)
++#ifndef NO_IRQ
++#define NO_IRQ  0
++#endif
++#include <linux/of_irq.h>
++#endif /* CONFIG_SPARC_LEON */
+ 
+ MODULE_AUTHOR("Grant Likely <grant.likely@secretlab.ca>");
+ MODULE_DESCRIPTION("Xilinx SystemACE device driver");
+@@ -1206,7 +1212,13 @@ static int __devinit ace_of_probe(struct platform_device *op)
+ 	id = of_get_property(op->dev.of_node, "port-number", NULL);
+ 
+ 	/* physaddr */
++#if defined(CONFIG_SPARC_LEON)
++	/* TODO: Remove when SPARC gets of_address_to_resource. */
++	res = op->resource[0];
++	rc = 0;
++#else
+ 	rc = of_address_to_resource(op->dev.of_node, 0, &res);
++#endif
+ 	if (rc) {
+ 		dev_err(&op->dev, "invalid address\n");
+ 		return rc;
+@@ -1238,6 +1250,8 @@ static const struct of_device_id ace_of_match[] __devinitconst = {
+ 	{ .compatible = "xlnx,opb-sysace-1.00.c", },
+ 	{ .compatible = "xlnx,xps-sysace-1.00.a", },
+ 	{ .compatible = "xlnx,sysace", },
++	{ .name = "GAISLER_GRACECTRL", },
++	{ .name = "01_067", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, ace_of_match);
+-- 
+1.5.4
+

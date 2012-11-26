@@ -1,0 +1,35 @@
+From 88a5250403925bb159eb2f0a82604737f6b1fbc1 Mon Sep 17 00:00:00 2001
+From: Daniel Hellstrom <daniel@gaisler.com>
+Date: Wed, 13 Jul 2011 09:13:50 +0200
+Subject: [PATCH 9/9] xsysace: removed double registration of driver
+
+Commit 1c48a5c93da63132b92c4bbcd18e690c51539df6 seems to have
+introduced two platform drivers during conversion. This patch
+registers only the driver used by LEON.
+
+Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
+---
+ drivers/block/xsysace.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
+index 19dba5a..660a04a 100644
+--- a/drivers/block/xsysace.c
++++ b/drivers/block/xsysace.c
+@@ -1299,11 +1299,12 @@ static int __init ace_init(void)
+ 	rc = ace_of_register();
+ 	if (rc)
+ 		goto err_of;
+-
++#if 0
+ 	pr_debug("xsysace: registering platform binding\n");
+ 	rc = platform_driver_register(&ace_platform_driver);
+ 	if (rc)
+ 		goto err_plat;
++#endif
+ 
+ 	pr_info("Xilinx SystemACE device driver, major=%i\n", ace_major);
+ 	return 0;
+-- 
+1.5.4
+

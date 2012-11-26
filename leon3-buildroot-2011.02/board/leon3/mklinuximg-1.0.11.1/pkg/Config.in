@@ -1,0 +1,53 @@
+menu "LEON Linux Loader setup"
+	comment "This is only used if a Linux Kernel is built. It will create"
+	comment "output/images/image.ram RAM image used for MKPROM and GRMON."
+	comment ""
+
+	config LB_MKLI_PATH
+		string "Path to mklinuximg"
+		default ""
+		help
+		  Custom LINUX mklinuximg utility, absolute PATH to mklinuximg utility.
+
+	config LB_MKLI_BASE
+		hex "Linux Base Address"
+		default 0x40000000
+		help
+		  Optional physical base address. The Linux kernel will be
+		  placed at this address in main memory.
+		  The default is 0x40000000.
+
+	config LB_MKLI_CMDLINE
+		string "Kernel Command Line"
+		default "console=ttyS0,38400"
+		help
+		  Set Linux Kernel Command Line. The default is
+		  "console=ttyS0,38400".
+
+	config LB_MKLI_FREQ
+		int "Optional System Frequency MHz"
+		default 0
+		help
+		  Set this to 0 to auto detect the system frequency (rely on
+		  bootloader or GRMON).
+
+#	config LB_MKLI_AMPOPTS
+#		string "Optional AMP Options"
+#		default ""
+
+	config LB_MKLI_ETHMAC
+		string "Ethernet MAC Address"
+		default "00007ccc0145"
+		help
+		  First Ethernet MAC address (eth0). MAC address is given
+		  as a 6-byte hex string. Default is "00007ccc0145"
+
+	config LB_MKLI_IPI_NUM
+		string "Linux SMP IPI IRQ Number"
+		default "0"
+		help
+		  This options is for SMP kernels only. It determines which
+		  IRQ Linux will use for inter processor IRQ signalling, IPI.
+		  The default is IRQ13. Allowed values are 1..14. 0 indicates
+		  that Linux use the default IRQ number.
+endmenu

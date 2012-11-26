@@ -1,0 +1,171 @@
+#!/bin/bash
+
+usage() {
+    echo "Usage:"
+    echo "$0 <linux-image> <out-file> [-freq <frequency>] [-base <baseaddr>] [-cmdline <string>] [-amp <string>] [-ethmac <string>] [-ipi irq_num]"
+    echo "  <linux-image> linux image, normally <linux-dir>/arch/sparc/boot/image."
+    echo "  <out-file>    output image that can be uploaded using GRMON or run in TSIM."
+    echo ""
+    echo " optional parameters:"
+    echo "  -base <baseaddr>  optional baseaddress. The default is 0x40000000."
+    echo "  -cmdline <string> kernel parameter string. Default is \"console=ttyS0,38400\"."
+    echo "  -freq <frequency> optional frequency parameter in case if it cannot be retrived from the Timer scalar."
+    echo "  -amp <string>     optional strng of format <idx0>=<val0>:<idx1>=<val1>:... that sets for core index"
+    echo "                    n property ampopts to value n. Example 0=1:1:0 will set core index 0's ampopts to 1"
+    echo "		      and core index 1's ampopts to 0."
+    echo "  -ethmac <string>  set the ethernet mac address as 12 dgt hex. Default: 00007ccc0145"
+    echo "  -ipi <irq_num>    IRQ number used by Linux SMP for IPIs. May not be shared. Allowed values: 1..14"
+    echo "  -tools <string>   Path and prefix for toolchain. Default: sparc-linux"
+
+    exit 1;
+}
+
+isdump=0;isdbg=0;istest=0; ofile=""; ldir=""; baddr="0x40000000"; freq="0x2625A00"; cmdline="console=ttyS0,38400"; amp=""; smp=""; ipi="0"
+ethmac="00007ccc0145";
+tools="sparc-linux"
+
+while [ $# -ne 0 ]
+do
+    case "$1" in
+	#-o) shift; ofile="$1";
+	-dump) isdump=1;;
+	-d) isdbg=1;;
+	-t) istest=1;;
+	-freq) shift; freq="$1";;
+	-cmdline) shift; cmdline="$1";;
+	-base) shift; baddr="$1";;
+	-ethmac) shift; ethmac="$1";;
+	-amp) shift; amp="$1";;
+	-smp) ;; # ignore deprecated SMP flag, is autodetected
+	-ipi) shift; ipi="$1";;
+	-tools) shift; tools="$1";;
+	*) a[${#a[*]}]="$1";;
+    esac
+    shift
+done
+
+ampoptfile="amp_opts.c"
+imageo="image.o"
+imagep="image.piggy"
+linuxwrap2S="mklinuximg.2.S"
+linuxwrapld="mklinuximg.ld"
+pgts="pgt.S"
+pgto="pgt.o"
+promstage2o="prom_stage2.o"
+removepredefsh="remove_predefs.h"
+if [ "$isdump" == "0" ]; then
+    tmpdir=`mktemp -d`
+    tmpextra=-I${tmpdir}
+    ampoptfile=$tmpdir/$ampoptfile
+    imageo=$tmpdir/$imageo
+    imagep=$tmpdir/$imagep
+    linuxwrapld=$tmpdir/$linuxwrapld
+    linuxwrap2S=$tmpdir/$linuxwrap2S
+    pgts=$tmpdir/$pgts
+    pgto=$tmpdir/$pgto
+    promstage2o=$tmpdir/$promstage2o
+    removepredefsh=$tmpdir/$removepredefsh
+fi    
+
+ldir=${a[0]}
+limg=${a[0]}
+o=${a[1]}
+prefix=`dirname $(readlink -f $0)`/
+
+if [ "${#a[*]}" != "2" ]; then usage; fi
+
+bss_addr=0x`${tools}-objdump -h $limg | grep \\\\.bss\\[\\[:space:\\]\\] | awk '{ print $4 }' `;
+bss_size=0x`${tools}-objdump -h $limg | grep \\\\.bss\\[\\[:space:\\]\\] | awk '{ print $3 }' `;
+
+# Autodetect if SMP image (if symbol trapbase_cpu0 exists)
+smp_img="NO"
+if ${tools}-readelf -s $limg | grep trapbase_cpu0 > /dev/null ; then
+	smp="-DCONFIG_SMP";
+	smp_img="YES"
+fi
+
+# Autodetect Linux version from Linux header in head_32.S
+hdr_base_adr=`${tools}-objdump -x $limg | grep root_flags | sed 's/[0-9a-fA-F][ ].*$//g'`
+hdr_base_adr=`echo ${hdr_base_adr}0`
+linux_ver=`${tools}-readelf -x 1 $limg | grep -E "^  0x${hdr_base_adr}" | cut -d' ' -f5`
+linux_ver=`echo 0x${linux_ver}`
+
+macrostr=-DETHMACDEF=0x${ethmac}ull
+#" -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE=\"\\\"${cmdline}\\\"\" "
+#echo "Linux-dir     :" $ldir
+echo "Linux version :" $linux_ver
+echo "Linux-img     :" $limg "(bss:" $bss_addr ")"
+echo "Linux-wrap    :" $o
+echo "prefix        :" $prefix
+echo "base          :" $baddr
+echo "macrodef      :" $macrostr
+echo "amp           :" $amp
+echo "ethmac        :" $ethmac
+echo "SMP detected  :" $smp_img
+echo "ipi           :" $ipi "(zero = use Linux default)"
+bss_clear_start=$((($bss_addr-0xf0000000+$baddr)))   
+bss_clear_end=$((($bss_clear_start+$bss_size)))   
+
+# 1. create a static MMU page table pgt.S using pgt_gen.c
+# 2. compile prom_stage2.c and pgt.S
+# 3. convert Linux-img into a binary elf section
+# 4. create a linkerscript mklinuximg.ld that merges Linux-img, pgt.S and prom_stage2.c
+# 5. create the output image
+
+echo "" > ${ampoptfile}
+if [ "x$amp" != "x" ]; then
+    echo $amp | awk '{split($0,a,":"); for (v in a) { print a[v]; }; }' | awk '{split($0,a,"="); print "{" a[1] "," a[2] "},"; }; ' >> ${ampoptfile}
+fi
+
+# -I$ldir/include -I. -I$ldir/arch/sparc/include 
+echo -e "########### \n" \
+     "gcc -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE=\"\\\"${cmdline}\\\"\" -D__KERNEL__ -o pgt_gen ${prefix}pgt_gen.c && \
+	./pgt_gen >${pgts} && rm pgt_gen"
+      gcc -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE="\"${cmdline}\"" -D__KERNEL__ -o pgt_gen ${prefix}pgt_gen.c && \
+	./pgt_gen >${pgts} && rm pgt_gen 
+
+echo -e "########### \n" \
+     "${tools}-gcc ${macrostr} -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE=\"\\\"${cmdline}\\\"\" -c ${pgts} -o ${pgto}"
+      ${tools}-gcc ${macrostr} -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE="\"${cmdline}\"" -c ${pgts} -o ${pgto}
+      
+echo -e "########### \n" \
+     "${tools}-gcc ${macrostr} -DLINUX_VERSION_CODE=$linux_ver $smp -DIPI_NUM=$ipi $tmpextra -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE=\"\\\"${cmdline}\\\"\" -I. ${prefix}prom_stage2.c -c -o ${promstage2o} -fno-builtin  -D__KERNEL__ -mno-fpu -nostdinc -iwithprefix include -g -Os "
+      ${tools}-gcc ${macrostr} -DLINUX_VERSION_CODE=$linux_ver $smp -DIPI_NUM=$ipi $tmpextra -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE="\"${cmdline}\""       -I. ${prefix}prom_stage2.c -c -o ${promstage2o} -fno-builtin  -D__KERNEL__ -mno-fpu -nostdinc -iwithprefix include -g -Os || exit
+
+echo -e "########### \n" \
+     "${tools}-objcopy -O binary -R .note -R .comment -S $limg ${imagep}"
+      ${tools}-objcopy -O binary -R .note -R .comment -S $limg ${imagep} || exit
+		    
+echo -e "########### \n" \
+     "${tools}-ld -r -b binary ${imagep} -o ${imageo} -g "
+      ${tools}-ld -r -b binary ${imagep} -o ${imageo} -g  || exit
+
+echo -e "########### \n" \
+      "Prepare ${removepredefsh}"
+echo "" > ${removepredefsh}
+
+echo -e "########### \n" \
+     "cat ${prefix}mklinuximg.S | sed -e 's/PREDEF/`echo ${removepredefsh} | sed -e 's/\//\\\\\//g'`/g' > ${linuxwrap2S}"
+      cat ${prefix}mklinuximg.S | sed -e "s/PREDEF/`echo ${removepredefsh} | sed -e 's/\//\\\\\//g'`/g" > ${linuxwrap2S}
+
+${tools}-gcc -I. -dM -C -E -P ${linuxwrap2S} | cut -d' ' -f -2 | sed 's/#define/#undef/g' | grep -v __STDC_HOSTED__ > ${removepredefsh}.2 || exit
+mv ${removepredefsh}.2 ${removepredefsh}
+${tools}-nm $limg | awk '{ if (toupper($2) == "T" && !match($3,"\\.") ) { print $3 " = 0x" $1 ";"; } }' >> ${removepredefsh}
+
+echo -e "########### \n" \
+     "${tools}-gcc -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE=\"\\\"${cmdline}\\\"\" -E -C -P -I. -DIMAGE=\"${imageo}\" -DPROMSTAGE2=${promstage2o} -DPGTO=${pgto} ${linuxwrap2S} -o ${linuxwrapld} " 
+      ${tools}-gcc -DLEONSETUP_MEM_BASEADDR=${baddr} -DBOOTLOADER_freq=${freq} -DCONFIG_KERNEL_COMMAND_LINE="\"${cmdline}\""       -E -C -P -I. -DIMAGE="${imageo}"   -DPROMSTAGE2=${promstage2o} -DPGTO=${pgto} ${linuxwrap2S} -o ${linuxwrapld} || exit
+
+echo -e "########### \n" \
+     "${tools}-ld -X -T ${linuxwrapld} -o $o --defsym bss_start=$bss_clear_start --defsym bss_end=$bss_clear_end -g "
+      ${tools}-ld -X -T ${linuxwrapld} -o $o --defsym bss_start=$bss_clear_start --defsym bss_end=$bss_clear_end -g || exit
+
+if [ "$isdump" == "1" ]; then
+echo -e "########### \n" \
+     "${tools}-objdump -d $o > $o.dis"
+      ${tools}-objdump -d $o > $o.dis 
+fi
+
+if [ "$isdump" == "0" ]; then
+    rm -rf ${tmpdir}
+fi

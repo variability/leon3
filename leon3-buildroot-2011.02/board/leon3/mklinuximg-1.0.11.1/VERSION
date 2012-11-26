@@ -1,0 +1,3 @@
+NAME=LEON Linux RAM Loader (mklinuximg) 2.6.36
+VERSION=1.0.11
+REQ_LINUX=2.6.36

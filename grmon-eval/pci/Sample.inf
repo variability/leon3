@@ -1,0 +1,50 @@
+;; This file is an example INF file for a PCI device
+;; To use this files the section [MyModels] must be
+;; changed to contain the PCI devices that should
+;; be installed.
+;; The [Strings] section contains variables which
+;; can be set to desired values
+;; See Microsoft Developer Network for more information
+;; ex. Creating an INF File
+;; http://msdn2.microsoft.com/en-us/library/ms790220.aspx
+
+[Version]
+Signature="$CHICAGO$"
+provider=%Mfg%
+DriverVer = 10/30/2007,1.00
+Class=%ClassName%
+ClassGuid={a5a4334b-48fb-410d-8e70-9b658add90e5}
+
+[Manufacturer]
+%Mfg%=MyModels
+
+;; List all devices here
+;; more information here
+;; http://msdn2.microsoft.com/en-us/library/ms794357.aspx
+[MyModels]
+"MyDevice"= MyNullInstallSection, PCI\VEN_0001&DEV_0001
+
+[MyNullInstallSection]
+;; The install section is typically empty, but can contain entries that
+;; copy files or modify the registry.
+
+[MyNullInstallSection.Services]
+AddService = ,2    ; no value for the service name
+
+[ControlFlags]
+ExcludeFromSelect = *
+; Remove all devices listed in this INF file from certain user 
+; interface displays, from which a user is expected to select a particular device 
+; for installation.
+
+[ClassInstall32]  ; Register a new class in Windows 2000 and later
+AddReg=UpDateRegistry
+
+[UpDateRegistry]
+HKR,,,,%ClassName%
+HKR,,Icon,,-5
+
+[Strings]
+;; Set Mfg to the desired manufacturer name
+Mfg="MyCompany" 
+ClassName="Development Boards"

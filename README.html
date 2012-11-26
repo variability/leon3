@@ -1,0 +1,141 @@
+<html>
+<head><title>SPARC Software Development</title></head>
+
+<body>
+
+<h1>Developing SPARC Software on FPGA</h1>
+
+<br>
+This guide will help you get a properly configured implementation of the LEON3 open-source processor onto the Xilinx ML509 FPGA board. The latter part of the guide will describe how to get a linux distribution running on the LEON3, and how to cross-compile and run your own code.
+<p>
+This guide assumes your root folder for the project is 'project/'.
+
+<br><br><br>
+
+<h3>Requirements</h3>
+This guide assumes you have the following lab configuration:
+<ul>
+	<li>An x86_64 Linux host machine</li>
+	<li>A Xilinx XUPV5-LX110T (aka ML509) FPGA board</li>
+	<li>The Xilinx software suite, including ISE and iMPACT</li>
+	<li>A USB-JTAG programming cable with which to program and debug the FPGA</li>
+</ul>
+These are not hard requirements to get the setup running, but you'll have to find your own solutions for where your setup deviates from the listed requirements.
+
+<br><br><br>
+
+<h3>Download and Extract</h3>
+
+
+Download all files from github (https://github.com/variability/leon3.git) and extract them to the root of your project folder (project/). You should have the following three folders:
+
+<ul>
+	<li>LEON3 source code: grlib-gpl-1.1.0-b4113</li>
+	<li>LEON3 debug monitor tool: grmon-eval</li>
+	<li>Buildroot tool for configuring and crosscompiling linux: leon3-buildroot-2011.02</li>
+</ul>
+
+<br>
+
+<h3>Configuring and Implementing LEON3</h3>
+
+<i>NOTE: A precompiled version of the processor bitfile is available in 'project/grlib-gpl-1.1.0-b4113/designs/leon3-xilinx-ml509/bitfile' with the following changes made to the default configuration:</i><p>
+
+<ul>
+	<li>MUL/DIV instructions are enabled</li>
+	<li>branch prediction is enabled</li>
+	<li>floating point unit is enabled</li>
+</ul>
+
+<i>This configuration has been tested and verified. If you wish to make further changes to the processor, continue with the next steps for configuration and compilation. Otherwise, jump to the FPGA programming step to load the provided bitfile.</i><p><br><br>
+
+First, navigate to 'project/grlib-gpl-1.1.0-b4113/designs/leon3-xilinx-ml509'. You can now make changes to the default LEON3 design by running:
+<p><b>
+sudo make xconfig
+</b><p>
+A GUI should pop up and let you make configuration changes to the board:<p>
+When you are done, 'Save and Exit'.<p>
+
+Now that the LEON3 configuration tool has made the needed changes to the VHDL of the LEON3 design, we'll use Xilinx ISE to implement it. Run the following command from 'project/grlib-gpl-1.1.0-b4113/designs/leon3-xilinx-ml509':<p>
+<i>NOTE: this following command assumes you have the 'ise' binary in your path, usually by sourcing /opt/Xilinx/&lt;version&gt;/ISE_DS/settings64.sh.
+This following command will create an ISE project in the /leon3-xilinx-ml509
+directory. This only needs to be run once to create the project.</i><p> 
+<b>
+make ise-launch
+</b><p>
+
+<i>NOTE: any time you make changes to the VHDL design via 'sudo make
+xconfig', ISE will automatically reload the changes. Therefore, if you ever
+want to change the processor configuration, just modify the config with 'sudo
+make xconfig' and then reimplement the design in ISE.</i><p>
+
+
+Xilinx ISE should launch with the project loaded.
+In the process pane on the left, click 'Implement Top Module'.<p>
+
+Once the design is synthesized and implemented, double click on 'Generate
+Programming File' to create the final bitfile.<p>
+
+<br><br>
+<b>
+Programming the FPGA
+</b><p>
+
+<i>NOTE: The FPGA board should be on and connected via usb jtag to the host machine.</i><p>
+
+Launch iMPACT. If you have compiled the processor is ISE, choose iMPACT from 'Tools' menu. If you have decided to load the provided bitfile type 'impact' in a terminal. Click on the 'Lauch Wizard' button at the top and click 'OK'. iMPACT performs a boundary scan, initializes a JTAG chain, and asks you to assign configuration files to each device on the chain. Bypass the first four devices by clicking on 'Bypass' until you reach the FPGA configuration memory.
+If you have performed the compilation yourself, the (.bit) bitfile should be in project/designs/leon3-xilinx-ml509. If you want to load the provided bitfile, choose it from project/designs/leon3-xilinx-ml509/bitfile, press 'No', click on Divece 5 (FPGA xc5vlx110t), check 'Verify' and press 'OK". Finally, right click on the device labeled 'xc5vlx110t' and click on 'Program'.
+
+To test your completed setup, navigate to project/grmon-eval/linux. Here, run:<p>
+<b>
+./grmon-eval -xilusb -u
+</b><p>
+This launches the LEON3 debug program that communicates to the board via JTAG.
+
+In the debugger, run:<p>
+<b>
+load ../samples/dhry.exe <br>
+run</b><p>
+
+You should see that the board has run a Dhrystone benchmark.
+
+<br><br><br>
+
+<h3>Configuring and Loading Linux</h3>
+
+Navigate to 'project/leon3-buildroot-2011.02/'. Run:<p>
+
+<b>sudo make xconfig (if you have qt installed)</b><p>
+or<p>
+<b>sudo make menuconfig (if you don't)</b><p>
+
+This is the configuration page for buildroot, which is an automated tool that takes care of crosscompilation as well as packaging the result into a bootable image for our board. This particular distribution of buildroot is specially configured for our LEON3 processor (and also contains necessary patches needed for the processor). Explore the options to include debugging tools and other libraries. Save the changes and exit.
+
+Now run:<p>
+
+<b>sudo make menu</b><p>
+
+Buildroot will now use its included x86_64 to SPARC crosscompiler to build the linux image.
+
+Once the image is built, we need to use a utility included in buildroot that makes the linux image loadable and bootable via the Leon 3 debug tool. To do so: navigate to project/leon3-buildroot-2011.02/board/leon3. Run:<p><b>
+sudo ./make_dsu</b><p>
+This will create a file 'image.dsu' in project/leon3-buildroot-2011.02/output/images. Copy this file to the project/grmon-eval/linux directory. Now to load and run the image. Navigate to project/grmon-eval/linux. IMPORTANT: Running './grmon-eval -xilusb -u' as before will FAIL to run, as it will halt on software traps. Make sure to include the '-nb' argument:<p>
+<b>
+./grmon-eval -xilusb -u -nb
+</b><p>
+Now, in the debugger:<p>
+<b>
+load image.dsu<br>
+run
+</b><p>
+
+You should be able to interact with the linux environment. Login with username 'root', no password.
+
+<br><br><br>
+
+<h3>Cross-compiling User Code and Loading User Files</h3>
+
+To compile your own code, add 'project/output/host/usr/bin' to your PATH environment variable. You can now use 'sparc-linux-gcc', 'sparc-linux-objdump', 'sparc-linux-ld', etc. Once you have compiled your code successfully, place the executable in project/leon3-buildroot-2011.02/output/target/root (or anywhere in the target filesystem). Then, remake the linux image and rerun make_dsu. Booting from this new image will include your files.
+
+</body>
+<html>

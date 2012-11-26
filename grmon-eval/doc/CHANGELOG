@@ -1,0 +1,874 @@
+---------------- 1.1.53------------------------------------------
+
+2012-08-27	Fixed default stack-pointer for FTSR memory controller
+
+2012-07-03	Added support for error injection of leon4ft
+
+---------------- 1.1.53------------------------------------------
+
+2012-05-31	Fixed a bug when 16-bit flash was not located at address 0x0
+
+2012-05-14	Fixed a bug for DDR2SPA when memory is located at address 0x0
+
+2012-04-19	Fixed a bug where DDR controller could probe outside
+		their AHB area.
+
+2012-01-17	Now possible to have more then 16 masters
+
+---------------- 1.1.52------------------------------------------
+
+2011-12-28	Added support for SPI2AHB core
+
+2011-12-28	Added support for SPI2AHB core
+
+2011-12-09	Correct JTAG mask for coolrunner devices
+
+2011-11-21	Fixed broken gresb debug link
+
+---------------- 1.1.51------------------------------------------
+
+2011-11-10	Added -xilmhz flag
+
+2011-09-22	GRETH: Disable EDCL if EDCL IP is set to 0.0.0.0
+
+2011-09-21	Support SPICTRL version 5
+
+2011-09-18	Added support for I2C2AHB core
+
+2011-09-14	Added support for Digilent JTAG HS1 cable. Windows only.
+
+2011-09-13      DDR2SPA: Added -ddr2cal switch and ddr2delay scan command
+
+2011-09-05	'info sys' for IRQ(A)MP shows extended interrupt
+          	number (if they are enabled).
+
+2011-08-17	Intel protection registers not correctly reported by
+		flash command
+
+2011-08-11	Spelling mistake in disassembly
+
+2011-08-08 	Fixed bug when writing uneven number of bytes with 
+		JTAG debug links.
+
+2011-08-08	Now possible to load files of uneven sizes to
+		16bit AMD style flash PROMs.
+
+---------------- 1.1.50------------------------------------------
+
+2011-07-21	Added -ftdicable <id> flag
+
+2011-07-08	Support version 3 of I2CMST core
+
+2011-06-21	GRESB backend now supports path addressing
+
+2011-06-20	L4STAT: Add l4stat clear command
+
+2011-05-26	GRESB backend did not handle EEP properly
+
+2011-05-18	Support version 4 of SPICTRL core 
+
+---------------- 1.1.49------------------------------------------
+
+2011-04-14 	Improved support for FTDI FT2232 based jtag debuglinks
+		for Windows, using the FTDI D2XX driver
+
+2011-03-24	DSU4: Add support for instruction trace buffer filters
+
+2011-03-17	AHBTRACE: Add at bsel command for AHBTRACE_MMB
+
+2011-03-16	L4STAT: Add statistics poll mode. See manual for details.
+
+2011-03-14	GRETH: Command 'mdio' now checks NV-bit
+
+---------------- 1.1.48------------------------------------------
+
+2011-01-03  	Erasing of some 8-bit AMD device could fail due to
+	        incorrect handling of the lockdown feature.
+
+2011-02-25  	Improved speed of gdb interface to reduce debug latency
+
+2011-02-14  	Added driver for GRPCI2
+
+---------------- 1.1.47------------------------------------------
+
+2011-02-02	Only enable APBUART 0 and 1
+
+2011-01-26	Do not turn off MMU when using the -ni flag
+
+2011-01-14	Added support for SPICTRL version 3
+
+---------------- 1.1.46------------------------------------------
+
+2010-12-15	Added JTAG IDs for additional Actel devices
+
+2010-12-15	Programming support for SST39VXXX flash devices
+
+2010-12-08	Extend GRIOMMU debug driver
+
+2010-12-07	Extend and document IRQMP debug driver
+
+2010-11-26	LEON4 statistical unit support
+
+2010-11-30	Added -nobridge flag
+
+---------------- 1.1.45------------------------------------------
+
+2010-11-23	Improved breakpoints for multi-core systems
+
+2010-11-02	FTMCTRL/MCTRL driver could probe disabled RAM area
+
+2010-10-28	Added driver for FTSDCTRL64
+
+2010-10-12	Fix crash when -altjtag couldnt load jtag_client.dll 
+
+2010-10-07	Make sure BA[1] is 0 when programming mode register
+           	on PC133 SDRAM
+
+2010-10-06	11-bit column address not properly detected on SDRAM
+
+2010-10-08	DSU4: Fix AHB trace display for 128-bit buses
+
+---------------- 1.1.44------------------------------------------
+
+2010-09-27	Added Virtex6 JTAG IDs
+
+2010-09-02	FPU registers were not correctly displayed in
+            	LEON2 systems with GRFPU.
+
+2010-08-30	Increased the maximum number of ELF sections to 64.
+
+2010-08-20	Updated L4STAT driver to support external events
+
+2010-08-16	Added initial support for GRIOMMU
+
+2010-08-10	Added initial support for IRQMP ASMP extension
+
+---------------- 1.1.43------------------------------------------
+
+2010-07-28	Added the -amontec option for Amontech JTAG cable
+
+2010-07-09	Compensate for incorrect CFI table in Atmel AT49BV163DT FLASH
+
+---------------- 1.1.42------------------------------------------
+
+2010-06-28	grmon-eval could fail on some custom grlib systems
+
+2010-06-16	Do not scan over AHB2AHB if bridge's ioarea generic is 0
+
+2010-06-10	Added driver for AHBDPRAM
+
+2010-06-10	Added configuration type 1 (multiple buses) support for PCIF
+
+2010-05-19	Added support for AHBJTAG version 1
+
+2010-05-12	Added driver for LEON4 Statistics module
+
+2010-05-12	Expanded and documented GRCLKGATE driver
+
+2010-05-12	Add support for MEMSCRUB (info reg/sys)
+
+2010-05-12	Add support for GR1553B (info reg/sys)
+
+2010-05-06  	Added a const attribute to the parameter data in the 
+            	function wmem of the custom dsu communications interface.
+
+---------------- 1.1.41------------------------------------------
+
+2010-04-28  	Added support for custom DSU communications module
+            	on windows host.
+
+2010-04-29	Added support for GRCLKGATE
+
+---------------- 1.1.40 ------------------------------------------
+
+2010-03-30	Added support for SST FLASH PROMs
+
+2010-03-24      PCI - Added driver for AT697 PCI core (enable with -at697)
+		      Added 'grpci enable bt' command to enable byte twisting.
+		      Fix PCI scan so it does not cause an PCI init.
+
+2010-02-16	Add .svf replay functionality
+
+---------------- 1.1.39 ------------------------------------------
+
+2010-01-21	Added JTAG ID's for Spartan6 devices
+
+2010-01-11	SRAM detection in MCTRL could fail on windows hosts
+
+---------------- 1.1.38 ------------------------------------------
+
+2009-12-16	Improved SPI Flash programming speed
+
+2009-11-13	Added new generic PCI driver with support for PCI bridges
+
+2009-11-13	Added support for DVI transmitter initialisation via I2C 
+		for GR-LEON4-ITX board. User can now specify the multiplexed
+		data input format (IDF) when performing DVI transmitter 
+		initialisation.
+
+2009-11-09	Extended SVGACTRL debug driver, 'draw' and 'frame' commands
+		must now be prefixed with 'svga '.
+
+2009-11-02	Added support for autodetection of Numonyx M25P05A, M25P10A,
+		M25P20, M25P32, M25P40, M25P64, and M25P128 SPI Flash devices.
+
+2009-10-06	Added support for VxWorks 6.7 kernel command line
+
+2009-09-21	Added flash support for pure 8-bit AMD flashes
+
+---------------- 1.1.37 ------------------------------------------
+
+2009-09-28	-freq and -stack options were accidentailly disabled in 1.1.36
+
+---------------- 1.1.36 ------------------------------------------
+
+2009-09-14	Jtag interface for FTDI FT2232 chip in MPSSE-JTAG-emulation mode
+		(-ftdi switch in linux)
+
+2009-08-28	FTMCTRL: -nosdram switch would always turn off EDAC
+
+2009-08-28	MCTRL driver could not detect 512 Mbyte SDRAM when
+		SRAM area was enabled.
+
+2009-07-28	Wrong JTAG ID on xc5vlx155
+
+2009-07-28	Added JTAG ID for GR712RC and GR102EA
+
+---------------- 1.1.35(b) ---------------------------------------
+
+2009-07-24	Support for DDR2 memories with 8 banks
+
+---------------- 1.1.35 -----------------------------------------
+
+2009-06-18      RTEMS Multiprocessor thread info support
+
+2009-04-24	eCos thread info
+
+2009-04-17	Vxworks thread info
+
+2009-04-09	Add readline history save
+
+---------------- 1.1.34a ----------------------------------------
+
+2009-03-23	Add eeload command
+
+2009-03-02	Win32 uart optimization
+
+2009-03-02	Win32 DSU UART speed-up optimization
+
+---------------- 1.1.34 -----------------------------------------
+
+2009-02-26	Added thread support for RTEMS 4.10
+
+2009-02-16	Support for Xilinx DLC10 USB cable
+
+2009-01-31	Fixed PnP scanning problem when 16 AHB masters
+
+---------------- 1.1.33 -----------------------------------------
+
+2009-01-27	Enable -mcfg[123] for all platforms (not just Linux)
+
+2009-01-20	Add a "log" command which dumps useful information to a logfile
+		and continues to log the current session.
+
+2008-12-30	Added support for SPI Flash programming
+
+2008-12-12	Added support for Xilinx Platform cable USB-II (DCL10)
+
+2008-12-04	Add "-log" start-up option which dumps useful information to a
+		logfile and logs the full GRMON session.
+
+2008-12-03	Support MMU with page size != 4k
+
+2008-12-02	Added ddr2skew command
+
+2008-11-21	Support programm AMD 8/16-bit FLASH without a LEON CPU.
+
+2008-10-26	Added debug driver for GRSYSMON
+
+2008-10-08	Extended I2CMST module with commands for interacting with
+		Chrontel DVI transmitters.
+
+---------------- 1.1.32 -----------------------------------------
+
+2008-09-29	Allow Flash programming through JTAG even if no leon2/3
+		is in the system
+
+2008-09-25	Added debug driver for GRUSBDC
+
+2008-09-25	Added command line switch for GRUSBHC debug drivers to skip
+		host controller reset.
+
+2008-09-11	Changed the tRFC default value to 130 ns for DDR2 memory
+		controller. Added timing switches (-trfc val) for both the
+		DDR and DDR2 memory controller. Changed to interpret the value
+		given with the -trfc switch in nanoseconds for the SDRAM memory
+		controller.
+
+2008-08-18	Disable UART write support if terminal cannot set RAW mode
+
+2008-08-11	Programming of 8/16-bit AMD flash only worked when
+		SRAM/SDRAM was available at 0x40001000.
+
+---------------- 1.1.31 -----------------------------------------
+
+2008-08-11	Moved PCIF init from startup to 'apcif init' command
+
+2008-08-04	Data was lost when loading S-RECORD files with records
+		that produced unaligned or non-word sized accesses.
+
+2008-07-15	Added 'dump' command that dumps a specified memory range
+		into a S-RECORD file.
+
+2008-07-15	When trying to verify an SREC file the file was
+		downloaded instead
+
+2008-07-15	Moved GRPCI init from startup to 'grpci init' command
+
+2008-07-11	Added DSU delay option to delay the DSU polling
+
+2008-07-10	Added retry and timeout options for GRESB back end
+
+2008-07-10	Added support for Actel CoreMP7 processor and the
+		CoreMP7 GRLIB wrapper (CMP7WRAP).
+
+2008-07-10	Added initial support for SPI memory controller (SPIMCTRL)
+
+---------------- 1.1.30 -----------------------------------------
+
+2008-06-26	SVGACTRL: User can now select from a wider range of display
+		formats (resolution, refresh rate). Added autodetection of
+		appropriate format based on available video clocks when
+		specifying a file.
+
+2008-06-23	Could not program flash memory if not located on address 0
+
+2008-06-04	Some 16-bit ST flash memories could not be programmed
+
+2008-05-31	DDR memory could not be auto-probed if it was mapped
+		at address 0.
+
+2008-05-29	Added i2c scan command
+
+2008-05-29	Updated SPICTRL debug module to support new 3-wire mode
+
+2008-05-29	spi and i2c write commands could print garbled terminal
+		output originating from a previous command.
+
+2008-05-21	The -ni switch caused access to unimplemented areas in
+		the leon3 dsu which could hang the AHB bus when the trace
+		buffers were disabled
+
+---------------- 1.1.29 -----------------------------------------
+
+2008-04-24	Set stack in AHBRAM if no other memory available
+
+2008-04-17	Update RTEMS thread support
+
+---------------- 1.1.28 -----------------------------------------
+
+2008-03-19	Xilinx USB would drop characters when using UART loop-back
+
+2008-03-18	Writing to memory from GDB would sometimes overwrite the
+		following word
+
+2008-03-06	Fix to enable attaching to running application from GDB
+
+2008-01-31	Automatically detect RTEMS version.
+		Requires the _RTEMS_version symbol which will be included
+		by default in RTEMS 4.7.99.2 1.0.5
+
+---------------- 1.1.27b ----------------------------------------
+
+2008-01-29	Eval version for Cygwin was compiled with MinGW UART routines
+
+2008-01-25	Added support for WildCard
+
+2008-01-25	Added support for IPMVBCTRL
+
+---------------- 1.1.27 -----------------------------------------
+
+2008-01-21	On Solaris GRMON would not detect when GDB is disconnected
+
+2008-01-16	Add -jtagdevice option to select JTAG debug device
+
+2008-01-08	The cache was only updated when write length was 4 bytes.
+
+2008-01-08	Do not enable UART FIFO write when using Eclipse/GDB
+		since it will block GDB
+
+2008-01-04	Added Xilinx Spartan 3A JTAG device IDs
+
+---------------- 1.1.26 -----------------------------------------
+
+2007-12-17	SPI selftest failed for fifo sizes > 15
+		SPI commands only accepted decimal values
+
+2007-12-16	SVGA driver could not read certain PPM files
+
+2007-12-14	Memory detection for mctrl/ftmctrl could fail if
+		non-standard AHB address mapping was used
+
+2007-12-13	Added support for reading and writing the console
+		using APBUART FIFO debug mode
+
+2007-12-11	Fixed crash on Windows when changing EDCL ip
+
+2007-12-07	Added support for Actel ProASIC3 TAP JTAG debug link
+
+2007-11-30	i2c bitrate command could cause segfault
+
+---------------- 1.1.25a ----------------------------------------
+
+2007-11-20	Removed reset from greth driver. Could cause edcl link to be lost
+
+2007-11-19	Added support for GRLIB I2C slave
+
+2007-11-13	Fixed ELF symbol table read for VxWorks binary images.
+		This make break, bt, prof, sym ... work as expected.
+
+2007-11-05	Select between multiple Xilinx USB cables with -xilport switch
+
+---------------- 1.1.25 -----------------------------------------
+
+2007-10-30	USB DCL driver now works with Window
+
+2007-10-30	Phyaddr was not set correctly in GRETH driver
+
+2007-10-30	Added -xilusb support for cygwin
+
+2007-10-30	Add PCI support for Windows
+
+2007-10-25	PCIF debug driver:
+		Added commands for scanning and allocating resources
+		on the PCI bus (apcif scan, apcif conf and apcif info).
+
+2007-10-25	Added support for DDR2 controller (ddr2spa)
+
+---------------- 1.1.24a ----------------------------------------
+2007-10-19	Added support for binary file loads and flash programming
+
+2007-10-15	Fixed RTEMS-4.6 thread debugging in GDB and Eclipse
+
+---------------- 1.1.24 -----------------------------------------
+
+2007-10-11	Fixed ticks printout for RTEMS-4.8 threads, and
+		GDB RTEMS threads backtrace.
+
+2007-10-05	GRESB backend did not handle EEP properly
+
+2007-10-04	Experimental support for Xilinx Platform USB JTAG cable
+
+---------------- 1.1.23b ----------------------------------------
+
+2007-10-02	Fixed GDB interface for Eclipse
+
+2007-10-01	make grmon program xilinx usb cable without fxload present
+
+---------------- 1.1.23a ----------------------------------------
+
+2007-09-28	Removed non-plug&play support from eval version
+
+2007-09-27	i2c write command wrote to wrong address
+		i2c read <i2caddr> did not NAK incoming data.
+
+2007-09-27	When debugging with GDB do not print error message
+		if threads are not available
+
+2007-09-27	GRPCI debug driver:
+		Added commands for scanning and allocating resources
+		on the PCI bus (grpci scan and grpci conf).
+
+2007-09-24	Debug printouts for GRESB backend removed.
+
+2007-09-27	Add support for xilinx usb cable -xilusb
+
+2007-09-25	Add support to specify parallell port address with -pport
+
+---------------- 1.1.23 -----------------------------------------
+
+2007-09-24	Debug printouts for GRESB backend removed.
+
+2007-09-21	add -nswb switch when running a debugger
+
+2007-09-21	Added flash programming support for 16-bit AMD PROMs
+
+2007-09-19	Allowed to select ethernet PHY address with -phyaddr
+
+2007-08-30	Skip # comments in batchfiles
+
+2007-08-29	Made GDB interface thread aware
+
+2007-08-24	Added print-out of leon3 physical cache tags
+
+2007-08-24	Driver for SSRAM controller did not detect correct amount
+		of memory when AHB windows equalled memory size
+
+---------------- 1.1.22 -----------------------------------------
+
+2007-08-14	win32 -uart option translate /dev/com<xx> and com<xx>
+		to //./com<xx>
+
+2007-08-13	Added support for SPI controller
+		Fixed bug in parsing of i2c arguments
+
+---------------- 1.1.21 -----------------------------------------
+
+2007-07-20	backtrace without symbol table could cause segfault
+
+2007-07-16	Added thread info command for displaying RTEMS threads
+
+---------------- 1.1.20 -----------------------------------------
+
+2007-06-27	Fixed chapter on loadable command modules in manual
+
+2007-06-27	Added support for GRLIB port of OC I2C-master
+
+2007-06-26	Determine leaf procedures from ELF-file instead of on board RAM.
+
+2007-06-25	pcif: added mapping commands, added ftsrctrl8 device driver
+
+2007-06-25	clear leon3ft test injection bits before inserting errors
+
+2007-06-12	GRUSB backend: grusb_open did not return a correct value.
+
+2007-06-08	Added support for GRFIFO interrupt register printout,
+		corrected LEON 2nd IRQ printout
+
+2007-06-01	Added info reg output to USB modules
+
+2007-05-30	Eval-version would expire to early.
+
+2007-05-30	In verify only check valid bytes in the last word
+
+2007-05-28	Update of USB EHCI and UHCI modules to new register layout.
+		Added multi-core support in  UHCI module. Changed printf->PRINT
+
+2007-05-10	Added memw command which reads one word per call
+
+2007-05-02	GRESB backend parameters -dna and -sna has new default values
+		(0xFE and 32).
+
+2007-04-25	added flash device id for intel strataflash
+
+2007-04-24	Fixed AHBTRACE 'at' command
+
+2007-04-23	Added write and read command to mdio interface for greth
+
+2007-04-22	added hwcheck command to dsu3 driver to check leon3 RAM memory
+
+2007-04-22	SSRCTRL driver did not parse commands correctly
+
+2007-04-22	Writing to 16-bit Intel flash could fail on last block
+
+2007-04-21	Added JTAG IDs for Virtex5 devices
+
+2007-04-18	Fixed bug when loading elf-images not ending on a
+		4-byte alignment (non-instruction ELFs). GRMON & GRSIM.
+
+2007-04-03	Fixed crash in evalversion of GrmonRCP when
+		running on LEON-FT caused by exit()
+
+2007-03-22	Added SatCAN and CAN bus mux device info
+
+2007-03-19	Added PCIF device drivers
+		cache consistency check for smp
+
+2007-03-05	Stack pointer and Wash limit was not set correctly
+		with EDAC for 8-bit RAM.
+
+2007-03-05	-ram switch did not interpret the value as kbytes
+
+2007-03-05	0x was missing before version numbers in info sys
+		eventhough the values were hex.
+
+2007-03-05	Mcfg registers were not rewritten during a load command
+		for mctrl, ftsrctrl and ddrspa controllers.
+
+2007-03-02	Fixed bug with serial connection on Windows where GrmonRCP
+		was unable to connect after trying to connect to the wrong port
+
+2007-02-20	break bit for bwatch was not cleared correctly
+
+2007-02-18	interrupting bus watchpoints for leon3
+
+2007-02-18	wash command failed on SMP leon3 systems
+
+2007-02-18	Added debug drivers for USB host controllers
+
+2007-02-15	Added initial support for Actel CorePCIF PCI core
+
+2007-02-08	dcache command shows physical tags for SMP and MMU enabled
+
+2007-02-20	bwatch did not clear break bit correclty.
+
+2007-02-19	added USB host device drivers
+
+2007-02-18	added interrupting bus watchpoints for leon3. Also fixed bug
+		where wash commands will not work in SMP mode
+
+2007-02-15	Added support for CorePCIF PCI core
+
+2007-02-08	show mmu physical snooping  tags on dcache command
+
+2007-02-06	Fixed bug that could cause the ATA driver to probe
+		on unrecognized commands.
+
+---------------- 1.1.19a ----------------------------------------
+
+2007-01-23	LEON3 scratch pad RAM was wrongly displayed
+		by info sys command
+
+---------------- 1.1.19 -----------------------------------------
+
+2007-01-19	Changed PCI interface to libpci
+
+2006-12-16	Added support for LEON3 sratch pad RAMs
+
+2007-01-16	Detect frequency for LEON2
+
+2007-01-16	added "leon" for LEON2
+
+2007-01-08	Fixed support for 8-bit PROMS (flash write)
+
+2007-01-06	added jtag id codes for spartan3e
+
+2007-01-05	Added (extended) write protection registers for LEON2
+
+2007-01-05	change in edcl algorithm.
+
+2006-12-28	Fixed bug in edcl backend.
+
+2006-12-19	support for bus watchpoints
+
+---------------- 1.1.18 -----------------------------------------
+
+2006-12-07	fixed bug in data cache
+
+2006-12-06	added driver for SVGA controller
+
+2006-12-06	-u switch did not work for leon2
+
+2006-12-01	Fixed 'backtrace' command
+
+2006-11-30	support for Scratch Pad RAM
+
+---------------- 1.1.17 -----------------------------------------
+
+2006-11-23	'wash' command failed to clear complete memory
+
+2006-11-23	Added DSU debug interface for Altera JTAG server
+
+2006-11-09	plug&play decoding failed to associate the AHB slave
+		interface with its AHB master interface if it used interrupts
+
+2006-11-04	Improved programming speed on 8-bit AMD PROMs
+
+2006-11-01	Flash detection would fail on 8-bit AMD PROMs
+		with 256 erase blocks
+
+---------------- 1.1.16 -----------------------------------------
+
+2006-10-22	LEON2 DSU did not disable AHB tracing during gdb stepping
+
+2006-10-19	Support for new giga-bit GRETH MAC
+
+2006-10-19	JTAG support for xc4vsx family
+
+2006-10-19	Support for multiple parports with JTAG cables
+
+2006-10-02	Added loadable modules for custom debug drivers
+
+2006-10-01	Added options to use several parports for JTAG interface
+
+2006-09-22	Flash programming did not work with FTSRCTRL controller
+
+---------------- 1.1.15 -----------------------------------------
+
+2006-09-19	AMD flash programming could fail when data was -1
+
+2006-09-15	Added CFI detection of bottom-block Atmel Macronix FLASH
+
+2006-09-08	Added support for 16-bit flash PROM
+
+2006-09-03	Added driver for new 16-bit DDR controller
+
+---------------- 1.1.14 -----------------------------------------
+
+2006-08-24	Fixed bug in PCI back-end for LEON2FT
+
+2006-08-15	Added driver for ftsdctrl core
+
+2006-07-20	mctrl/sdctrl driver did not set trfc correctly
+
+2006-07-11	Added memory wash support to ftsrctrl memory controller
+
+2006-07-11	info sys did not always print interrupt allocation
+
+2006-07-10	Flash CFI driver could not detect 256 erease regions
+
+2006-07-07	Changed USB DCL ID to 0x1781/0x0AA0
+
+2006-07-04	LEON2 driver did not detect GRFPU correctly
+
+2006-07-03	Support for 8-bit Intel flash programming for SRCTRL/FTSRCTL
+
+2006-07-01	Added USB support for windows hosts
+
+---------------- 1.1.13 -----------------------------------------
+
+2006-06-19	Multiple SRAM banks were not reliably detected
+
+2006-06-12 	Commands in loadable modules could not access caches
+
+2006-06-07	Added driver for ATA controller core
+
+2006-06-02	Added driver for DDR controller core
+
+---------------- 1.1.12 -----------------------------------------
+
+2006-05-02	Added support for gdb Insight interface
+
+2006-04-26	Added USB debug interface back-end
+
+
+---------------- 1.1.11 -----------------------------------------
+
+2006-04-18	Grmon failed to set RMW bit in leon2/3 memory controller
+
+2006-04-14	Added solaris-2.x port
+
+2006-04-12	New drivers for SSRAM and DDR controllers
+
+2006-04-11	gdb hardware breakpoints were lost on leon2 targets
+
+2006-04-11	Fixed wrong CRC generation in GRESB interface
+
+2006-04-11	Ethernet DSU link could duplicate write commands
+
+2006-04-10	Improved flash write speed by using write buffer
+
+2006-04-08	Added CFI flash programming support
+
+2006-03-23	increased maximum DSU baud rate for windows port
+
+2006-03-23	Added -trp3 and -trfc switched to set SDRAM params
+
+---------------- 1.1.10 -----------------------------------------
+
+2006-02-24	Added more leon2 drivers
+
+2006-02-23	inf reg now prints many more registers
+
+---------------- 1.1.9 -----------------------------------------
+
+2006-02-14	Profiling print-out was garbled in win32
+
+2006-02-12	Re-initialise memory controller before attempting
+		to load new application
+
+2006-02-09	Added more cores to the fixed leon2 configuration
+
+2006-02-09	Increased maximum trace buffer size to 4096
+
+2006-01-25	8-bit flash programing did not always work
+
+---------------- 1.1.8 -----------------------------------------
+
+2006-01-10	AMBA plug&play interrupts were truncated to 4 bits
+
+2006-01-07	Added Virtex4 JTAG ID codes
+
+2006-01-01	Improved memory detection in SRCTRL core
+
+---------------- 1.1.7 -----------------------------------------
+
+2005-12-10	updated to newer HASP drivers
+
+2005-12-03	Some register print-outs had incorrect addresses
+
+---------------- 1.1.6 -----------------------------------------
+
+2005-11-10	user module failed on windows
+
+2005-11-09	elf relocation did not work with overlays
+
+---------------- 1.1.5 -----------------------------------------
+
+2005-09-27	Network license would not always be released on exit
+
+
+---------------- 1.1.4 -----------------------------------------
+
+
+2005-09-12	Added LEON3FT error injection feature
+
+2005-09-12	Added possibility to attach to target without init
+
+2005-09-10	Improved compatibility with eclipse CDT
+
+2005-09-02	Added programming support for AMD flash prom
+
+2005-08-18	Merged LEON2/DSU and LEON3/GRLIB back-ends
+
+---------------- 1.0.13 ----------------------------------------
+
+2005-07-22	added most xilinx JTAG codes to AHBJTAG in grlib backend
+
+2005-07-15	round frequency to nearest integer on dsu backend
+
+2005-07-15	Reset parallel port when JTAG DSU is used
+
+2005-07-15	Added tcl GUI for grlib/logan driver
+
+2005-07-08	Added software error injection for LEON3 DSU backend
+
+2005-07-08	Added driver for grlib/logan
+
+---------------- 1.0.12 ----------------------------------------
+
+2005-06-22	Added support for 8-bit flash programming
+
+2005-06-22	Improved detection of SDRAM
+
+2005-06-22	Flash programming support for GR-CPCI-AT697 board
+
+2005-06-22	Switched to new HASP4/HL drivers
+
+2005-04-05	Added driver for FT sram controller (grlib)
+
+2005-03-23	Support for gdb debugging through Eclipse
+
+---------------- 1.0.10 ----------------------------------------
+
+2005-02-24      DSU backend did not always release the HASP license
+
+---------------- 1.0.8 -----------------------------------------
+
+2004-12-06      least significant bits were not masked when accessing
+                leon2 peripherals. (simulator backend)
+
+2004-11-29      sim_options structure was not backwards compatible
+                with tsim IO-modules
+
+2004-10-18      Disassemble of tst pseudo-instruction showed wrong
+                register (always 'tst %g0')
+
+2004-10-18      A new mode, with no backend loaded, was added
+
+2004-09-29      Detect multiple break/watch points on same address
+
+---------------- 1.0.6 -----------------------------------------
+
+2004-09-15      Loading non word-aligned s-record files failed
+
+---------------- 1.0.5 -----------------------------------------
+
+2004-08-14      Could not connect reliably to DSU over PCI (dsu)
+
+---------------- 1.0.4 -----------------------------------------
+
+2004-07-07      interrupt break through gdb did not work properly
+
+2004-07-07      init stack and various registers when start address is not 0
+

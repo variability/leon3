@@ -1,0 +1,76 @@
+================ RELEASE 1.0.11 (build 191) ================
+
+2011-06-23  Daniel Hellstrom <daniel@gaisler.com>
+        - Fixed linuxbuild problem when /bin/sh is not bash
+
+================ RELEASE 1.0.10 (build 191) ================
+
+2011-06-23  Daniel Hellstrom <daniel@gaisler.com>
+        - Fixed bug when "-base ADR" as used with ADR != 0x40000000
+
+2011-04-26  Daniel Hellstrom <daniel@gaisler.com>
+        - Removed IRQ controller mask register clear, newer Linux kernels
+          does this, besides the old code always cleared the mask for CPU[0].
+          This patch is needed for booting on CPU != 0.
+
+================ RELEASE 1.0.9 (build 188) ================
+
+2011-04-06  Daniel Hellstrom <daniel@gaisler.com>
+        - Made temporary MMU map 192MB instead of 16MB, this fixes a crash
+          during booting with large kernels (large initramfs rootfs)
+        - Removed empty IRQ entries in device tree. When IRQ=0 we should not
+          create interrupt entries, needed by genirq layer.
+
+================ RELEASE 1.0.8 (build 175) ================
+
+2011-02-03  Daniel Hellstrom <daniel@gaisler.com>
+        - IPI options in linuxbuild GUI was a bool, changed to string.
+
+================ RELEASE 1.0.7 (build 174) ================
+
+2011-02-03  Daniel Hellstrom <daniel@gaisler.com>
+        - Added option -ipi to linuxbuild GUI
+
+================ RELEASE 1.0.6 (build 173) ================
+
+2011-02-03  Daniel Hellstrom <daniel@gaisler.com>
+        - Autodetect if SMP image or not (-smp flag removed)
+	- Autodetect Linux kernel version, UART code needs this
+
+2011-02-02  Daniel Hellstrom <daniel@gaisler.com>
+        Added -ipi option in order to support multiple SMP
+	chips that does not use the default IRQ13 for IPIs.
+	IRQ13 shuold be reserved for IPI IRQs on SMP designs.
+	The ipi_num property will appear in the device tree.
+
+2011-01-31  Daniel Hellstrom <daniel@gaisler.com>
+        Added AMBA ioarea and AMBA System ID to device tree.
+
+2011-01-12  Daniel Hellstrom <daniel@gaisler.com>
+        Fix for newer Linux, new version requires different
+	return code from the UART write routine. Still
+	compatible with old Linux versions however it will
+	be blocking and hold Linux prom lock during write.
+
+================ RELEASE 1.0.5 (build 158) ================
+
+2010-11-24  Konrad Eisele  <konrad@gaisler.com>
+	Use temporary files
+
+================ RELEASE 1.0.4 ================
+
+2010-10-20  Konrad Eisele  <konrad@gaisler.com>
+	Add -ethmac option
+
+2010-10-20  Konrad Eisele  <konrad@gaisler.com>
+	Remove dependency to linux source
+
+2010-10-19  Konrad Eisele  <konrad@gaisler.com>
+	Kernel command line with spaces
+
+2010-10-04  Konrad Eisele  <konrad@gaisler.com>
+	Check for recursive bridges
+
+2010-09-29  Konrad Eisele  <konrad@gaisler.com>
+	Add -amp option
+

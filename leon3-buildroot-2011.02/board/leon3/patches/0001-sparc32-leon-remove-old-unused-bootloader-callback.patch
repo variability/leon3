@@ -1,0 +1,50 @@
+From afc2181ccc258f022add862be4f3c156d000383a Mon Sep 17 00:00:00 2001
+From: Daniel Hellstrom <daniel@gaisler.com>
+Date: Fri, 1 Apr 2011 09:03:18 +0200
+Subject: [PATCH 1/9] sparc32,leon: remove old unused bootloader callback hook
+
+The callback hook was used by the bootloader to fixup device nodes
+when some early Linux kernel facilities where available. This have
+always been a bad strategy in many ways, for example it makes the
+bootloader dependent on the kernel which makes it impossible to
+to use the same bootloader for kernels of different versions.
+
+The callback was removed from the LEON bootloaders therefore it is
+not needed anymore.
+
+Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
+---
+ arch/sparc/kernel/leon_kernel.c |   12 ------------
+ 1 files changed, 0 insertions(+), 12 deletions(-)
+
+diff --git a/arch/sparc/kernel/leon_kernel.c b/arch/sparc/kernel/leon_kernel.c
+index d17255a..431a6b7 100644
+--- a/arch/sparc/kernel/leon_kernel.c
++++ b/arch/sparc/kernel/leon_kernel.c
+@@ -446,17 +446,6 @@ void __init leon_trans_init(struct device_node *dp)
+ 	}
+ }
+ 
+-void __initdata (*prom_amba_init)(struct device_node *dp, struct device_node ***nextp) = 0;
+-
+-void __init leon_node_init(struct device_node *dp, struct device_node ***nextp)
+-{
+-	if (prom_amba_init &&
+-	    strcmp(dp->type, "ambapp") == 0 &&
+-	    strcmp(dp->name, "ambapp0") == 0) {
+-		prom_amba_init(dp, nextp);
+-	}
+-}
+-
+ #ifdef CONFIG_SMP
+ 
+ void leon_set_cpu_int(int cpu, int level)
+@@ -513,5 +502,4 @@ void __init leon_init_IRQ(void)
+ 
+ void __init leon_init(void)
+ {
+-	of_pdt_build_more = &leon_node_init;
+ }
+-- 
+1.5.4
+

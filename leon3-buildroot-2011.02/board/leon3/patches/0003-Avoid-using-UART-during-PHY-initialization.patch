@@ -1,0 +1,31 @@
+From 340cb663523fa28b93062265bc2a2e0e9c319344 Mon Sep 17 00:00:00 2001
+From: Daniel Hellstrom <daniel@gaisler.com>
+Date: Tue, 8 Feb 2011 14:48:47 +0100
+Subject: [PATCH 3/9] Avoid using UART during PHY initialization
+
+For LEON systems using EDCL the UART characters are tunnelled
+over Ethernet (software completely unaware). When the PHY is
+initializing Ethernet is down temporarily, the UART must not
+be used.
+
+Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
+---
+ drivers/net/phy/mdio_bus.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index 6c58da2..7a06b5e 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -125,7 +125,7 @@ int mdiobus_register(struct mii_bus *bus)
+ 	}
+ 
+ 	bus->state = MDIOBUS_REGISTERED;
+-	pr_info("%s: probed\n", bus->name);
++	pr_debug("%s: probed\n", bus->name);
+ 	return 0;
+ 
+ error:
+-- 
+1.5.4
+
